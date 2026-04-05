@@ -1,0 +1,70 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: "lectures"
+  profiles:
+    active: "prod"
+  datasource:
+    url: jdbc:mysql://localhost:3306/e_learning
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  #config:
+    #import: "optional:configserver:http://localhost:8071/"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: "http://localhost:7080/realms/elearning/protocol/openid-connect/certs"
+
+  servlet:
+    multipart:
+      max-file-size: 2GB
+      max-request-size: 2GB
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    shutdown:
+      access: unrestricted
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8075/eureka/
+
+info:
+  app:
+    name: "lectures"
+    description: "E-learning Lectures Application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      mtalaat:
+        lectures: DEBUG

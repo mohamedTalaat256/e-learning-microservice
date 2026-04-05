@@ -1,0 +1,39 @@
+{
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember Me",
+    "logout": "Logout",
+    "loginOAuth2": "Login using OAuth2"
+  },
+  "home":{
+    "nav": {
+      "home": "Home",
+      "courses": "Courses",
+      "mentors": "Mentors",
+      "profile": "Profile",
+      "settings": "Settings",
+      "nav_arrow": "chevron_right"
+    },
+    "settings": {
+      "language": "Language",
+      "theme": "Theme",
+      "notifications": "Notifications"
+    }
+  },
+  "validation":{
+    "required": "required",
+    "max_length_is": "max length is",
+    "min_length_is": "min length is",
+    "max_value_is": "max value is",
+    "min_value_is": "min value is",
+    "enter_valid_email": "Enter a valid email"
+
+
+  }
+}

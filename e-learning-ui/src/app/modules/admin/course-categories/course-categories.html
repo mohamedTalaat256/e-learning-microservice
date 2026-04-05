@@ -1,0 +1,80 @@
+<p-toolbar styleClass="mb-6">
+  <ng-template #start>
+    <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+    <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedCourses()"
+      [disabled]="!selectedCategories || !selectedCategories.length" />
+  </ng-template>
+
+  <ng-template #end>
+    <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+  </ng-template>
+</p-toolbar>
+
+
+<p-table #dt [value]="categories()" [rows]="10" [columns]="cols" [paginator]="true"
+  [globalFilterFields]="['name', 'country.title', 'representative.title', 'status']"
+  [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedCategories" [rowHover]="true" dataKey="id"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} categories" [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="[10, 20, 30]">
+  <ng-template #caption>
+    <div class="flex items-center justify-between">
+      <h5 class="m-0">Manage Categories</h5>
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search" />
+        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+      </p-iconfield>
+    </div>
+  </ng-template>
+  <ng-template #header>
+    <tr>
+      <th style="width: 3rem">
+        <p-tableHeaderCheckbox />
+      </th>
+      <th pSortableColumn="id" style="width: 4rem">
+        id
+        <p-sortIcon field="id" />
+      </th>
+      <th pSortableColumn="title" style="min-width:8rem">
+        Title
+        <p-sortIcon field="name" />
+      </th>
+      <th style="min-width:16rem"> Description </th>
+
+      <th style="min-width: 12rem"></th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-category>
+    <tr>
+      <td style="width: 3rem">
+        <p-tableCheckbox [value]="category" />
+      </td>
+      <td style="min-width: 12rem">{{ category.id }}</td>
+      <td style="min-width: 16rem">{{ category.title }}</td>
+      <td style="min-width: 16rem">{{ category.description }}</td>
+
+      <td>
+        <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editCourse(category)" />
+        <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+          (click)="deleteCourse(category)" />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="categoryDialog" [style]="{ width: '450px' }" header="Course Details" [modal]="true">
+  <ng-template #content>
+    <div class="flex flex-col gap-6">
+       <form [formGroup]="categoryForm">
+        <app-form-input [control]="$any(categoryForm.get('title'))" label="title"> </app-form-input>
+        <app-form-input [control]="$any(categoryForm.get('description'))" label="description"> </app-form-input>
+      </form>
+    </div>
+  </ng-template>
+
+  <ng-template #footer>
+    <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+    <p-button label="Save" icon="pi pi-check" (click)="saveCourse()" />
+  </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />

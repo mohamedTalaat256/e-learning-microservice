@@ -1,0 +1,67 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: "users"
+  profiles:
+    active: "prod"
+  datasource:
+    url: jdbc:mysql://localhost:3306/e_learning
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  #config:
+    #import: "optional:configserver:http://localhost:8071/"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    shutdown:
+      access: unrestricted
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8075/eureka/
+
+keycloak:
+  server-url: http://localhost:7080
+  realm: elearning
+  client-id: elearning-users-microservice
+  client-secret: 1RhizxHLYqE8KAgEW7ZuP6AWbNO3ZlGg
+
+info:
+  app:
+    name: "users"
+    description: "E-learning users Application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      mtalaat:
+        users: DEBUG

@@ -1,0 +1,140 @@
+<p-toast></p-toast>
+<p-toolbar styleClass="mb-6">
+  <ng-template #start>
+    <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+    <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedCourses()"
+      [disabled]="!selectedCourses || !selectedCourses.length" />
+  </ng-template>
+
+  <ng-template #end>
+    <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+  </ng-template>
+</p-toolbar>
+
+<p-table #dt [value]="courses()" [loading]="loading()" [rows]="10" [columns]="cols" [paginator]="true"
+  [globalFilterFields]="['name', 'country.title', 'representative.title', 'status']"
+  [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedCourses" [rowHover]="true" dataKey="id"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} courses" [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="[10, 20, 30]">
+  <ng-template #caption>
+    <div class="flex items-center justify-between">
+      <h5 class="m-0">Manage Courses</h5>
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search" />
+        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+      </p-iconfield>
+    </div>
+  </ng-template>
+  <ng-template #header>
+    <tr>
+      <th style="width: 3rem">
+        <p-tableHeaderCheckbox />
+      </th>
+      <th pSortableColumn="id" style="width: 4rem">
+        id
+        <p-sortIcon field="id" />
+      </th>
+      <th pSortableColumn="title" style="min-width:8rem">
+        Title
+        <p-sortIcon field="name" />
+      </th>
+      <th style="min-width:8rem"> Instructor </th>
+      <th>Image</th>
+      <th pSortableColumn="price" style="min-width: 8rem">
+        Price
+        <p-sortIcon field="price" />
+      </th>
+      <th pSortableColumn="category" style="min-width:10rem">
+        Category
+        <p-sortIcon field="category" />
+      </th>
+      <th pSortableColumn="rating" style="min-width: 12rem">
+        Reviews
+        <p-sortIcon field="rating" />
+      </th>
+      <th pSortableColumn="inventoryStatus" style="min-width: 12rem">
+        Status
+        <p-sortIcon field="inventoryStatus" />
+      </th>
+      <th style="min-width: 12rem"></th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-course>
+    <tr>
+      <td style="width: 3rem">
+        <p-tableCheckbox [value]="course" />
+      </td>
+      <td style="min-width: 4rem">{{ course.id }}</td>
+      <td style="min-width: 16rem">{{ course.title }}</td>
+      <td style="min-width: 8rem">
+        <div class="flex items-center gap-2">
+          <img [alt]="course.instructor.firstName" [src]="course.instructor.profilePicture" class="circle-avatar-42"
+            style="vertical-align: middle; " />
+          <span class="image-text">{{ course.instructor.firstName +' ' + course.instructor.lastName }}</span>
+        </div>
+      </td>
+      <td>
+        <img [src]="course.thumbnail" [alt]="course.title" style="width: 64px" class="rounded" />
+      </td>
+      <td>{{ course.price | currency: 'USD' }}</td>
+      <td>{{ course.category.title }}</td>
+      <td>
+        <p-rating [(ngModel)]="course.rating" [readonly]="true" />
+      </td>
+      <td>
+        <p-tag [value]="getStatusTitle(course.isActive)" [severity]="getSeverity(course.isActive)" />
+      </td>
+      <td>
+        <p-button icon="pi pi-youtube" [rounded]="true" [outlined]="true" pTooltip="Course lectures" [routerLink]="['/admin/courses/lectures', course.id]" />
+        <p-button icon="pi pi-pencil" class="mx-2" [rounded]="true" [outlined]="true" (click)="editCourse(course)" />
+        <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteCourse(course)" />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog [visible]="courseDialog()" [style]="{ width: '950px' }" header="Category Details" [modal]="true">
+
+  <ng-template #content>
+    <form [formGroup]="courseForm">
+      <div class="flex flex-row gap-6 w-full">
+        <div class="flex flex-col gap-6 flex-1">
+          <app-form-input [control]="$any(courseForm.get('category'))" label="Category" type="select"
+            [options]="categoryOptions()">
+          </app-form-input>
+          <app-form-input [control]="$any(courseForm.get('instructor'))" label="Instructor">
+          </app-form-input>
+          <app-form-input [control]="$any(courseForm.get('title'))" label="Title"> </app-form-input>
+          <app-form-input [control]="$any(courseForm.get('description'))" label="Description"> </app-form-input>
+
+          <div class="grid grid-cols-12 gap-4">
+            <app-form-input class="col-span-6" [control]="$any(courseForm.get('price'))" label="Price" type="number">
+            </app-form-input>
+            <app-form-input class="col-span-6" [control]="$any(courseForm.get('discountPercentage'))"
+              label="Discount Percentage" type="number">
+            </app-form-input>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-6 flex-1">
+          <ng-container *ngIf="courseForm.value.thumbnail">
+            <img [src]="courseForm.value.thumbnail" [alt]="courseForm.value.thumbnail" class="block m-auto pb-4" />
+          </ng-container>
+          <app-form-input [control]="$any(courseForm.get('thumbnail'))" label="Thumbnail"> </app-form-input>
+          <app-form-input [control]="$any(courseForm.get('isActive'))" label="Status" type="radio"
+            [options]="statusOptions">
+          </app-form-input>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #footer>
+    <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+    <p-button label="Save" icon="pi pi-check" (click)="saveCourse()" [loading]="loadingSave()" />
+  </ng-template>
+
+
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
