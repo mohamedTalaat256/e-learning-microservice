@@ -9,9 +9,10 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { MenuItem } from 'primeng/api';
 import { AppConfigurator } from "./app.configurator";
 import { KEYCLOAK_EVENT_SIGNAL, KeycloakEventType, ReadyArgs, typeEventArgs } from 'keycloak-angular';
-import Keycloak from 'keycloak-js';
+import Keycloak, { KeycloakUserInfo } from 'keycloak-js';
 import { Button } from "primeng/button";
 import { TranslatePipe } from '@ngx-translate/core';
+import { AuthService } from '../../../core/service/auth.service';
 
 const presets = {
   Aura,
@@ -67,7 +68,7 @@ declare type SurfacesType = {
                         />
                     </g>
                 </svg>
-                <span>SAKAI</span>
+                <span>E-learning</span>
             </a>
         </div>
 
@@ -109,7 +110,19 @@ declare type SurfacesType = {
                     </button>
 
 
-                    <p-button [label]="'auth.loginOAuth2' | translate" severity="contrast" styleClass="w-full" (click)="login()"></p-button>
+
+
+                      @if(authService.authenticated()){
+                        @if(authService.authUser()){
+                      <a class="p-ripple px-0 pt-2 text-surface-900 dark:text-surface-0 font-medium text-xl">
+                            {{ authService.authUser()!['preferred_username'] }}
+                        </a>
+
+                        }
+                      }@else {
+                        <p-button [label]="'auth.loginOAuth2' | translate" severity="contrast" styleClass="w-full" (click)="login()"></p-button>
+                      }
+
 
                     <button type="button" class="layout-topbar-action" (click)="logout()">
                         <i class="pi pi-sign-out"></i>
@@ -124,13 +137,14 @@ declare type SurfacesType = {
 })
 export class AdminToolBar {
   items!: MenuItem[];
-  authenticated = false;
+
   keycloakStatus: string | undefined;
   private readonly keycloak = inject(Keycloak);
   private readonly keycloakSignal = inject(KEYCLOAK_EVENT_SIGNAL);
 
   layoutService = inject(LayoutService);
-
+  authService = inject(AuthService);
+  authenticated = this.authService.authenticated();
 
   constructor(private router: Router) {
     effect(() => {
@@ -146,7 +160,17 @@ export class AdminToolBar {
         this.authenticated = false;
       }
 
-      console.log(this.keycloak.userInfo);
+      if (this.authenticated) {
+        this.authService.authenticated.set(true);
+        this.keycloak.loadUserInfo().then((userInfo: KeycloakUserInfo) => {
+
+          this.authService.authUser.set(userInfo);
+          console.log('User info loaded:', userInfo);
+        }).catch(error => {
+          console.error('Failed to load user info:', error)
+        });
+      }
+
     });
   }
 
@@ -157,7 +181,7 @@ export class AdminToolBar {
     this.keycloak.login();
   }
 
-  isLoggedIn():boolean{
+  isLoggedIn(): boolean {
     return !this.keycloak.isTokenExpired();
   }
   toggleDarkMode() {

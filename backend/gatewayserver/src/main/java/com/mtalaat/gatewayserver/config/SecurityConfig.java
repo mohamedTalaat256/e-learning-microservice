@@ -24,9 +24,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/eLearning/courses/**").hasRole("ADMIN")
+                        .pathMatchers("/eLearning/courses/**").hasAnyRole("ADMIN","STUDENT")
                         .pathMatchers("/eLearning/users/**").hasRole("ADMIN")
-                        .pathMatchers("/eLearning/lectures/**").hasRole("ADMIN")
+                        .pathMatchers("/eLearning/lectures/**").hasAnyRole("ADMIN","STUDENT")
                         .pathMatchers("/eLearning/messages/**").permitAll()
                         .anyExchange().authenticated()
                 )

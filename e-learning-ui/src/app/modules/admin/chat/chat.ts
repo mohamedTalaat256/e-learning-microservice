@@ -10,7 +10,7 @@ import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { Badge } from "primeng/badge";
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { UserService } from '../../../core/service/user.service';
+import { UserService } from '../users/user.service';
 
 @Component({
   selector: 'app-chat',

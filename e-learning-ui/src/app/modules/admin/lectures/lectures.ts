@@ -29,6 +29,11 @@ import { lectureService } from './lecture.service';
 import { Lecture } from '../../../core/model/lecture.model';
 import { BehaviorSubject } from 'rxjs';
 import {ObjectUtils} from "primeng/utils";
+import { Divider } from "primeng/divider";
+import { FieldsetModule } from 'primeng/fieldset';
+import { PanelModule } from 'primeng/panel';
+import { AccordionModule } from 'primeng/accordion';
+import { TabsModule } from 'primeng/tabs';
 
 interface Column {
   field: string;
@@ -52,7 +57,7 @@ interface ExportColumn {
     SliderModule,
     ProgressBarModule,
     ToggleButtonModule,
-    FormInput, ReactiveFormsModule],
+    FormInput, ReactiveFormsModule, Divider,FieldsetModule, PanelModule, AccordionModule, TabsModule ],
   templateUrl: './lectures.html',
   styleUrl: './lectures.scss',
   providers: [MessageService, ConfirmationService, lectureService],

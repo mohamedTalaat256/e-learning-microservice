@@ -65,7 +65,8 @@
       <td style="min-width: 8rem">{{ user.username }}</td>
       <td style="min-width: 8rem">
         <div class="flex items-center gap-2">
-           <img [alt]="user.attributes.firstName" [src]="user.attributes.profilePicture[0]" class="circle-avatar-42" style="vertical-align: middle; " />
+          <img [alt]="user.attributes.firstName" [src]="user.attributes.profilePicture[0]" class="circle-avatar-42"
+            style="vertical-align: middle; " />
           <span class="image-text">{{ user.firstName +' ' + user.lastName }}</span>
         </div>
       </td>
@@ -80,6 +81,49 @@
     </tr>
   </ng-template>
 </p-table>
+
+<p-dialog [visible]="userDialog()" [style]="{ width: '950px' }" header="User Details" [modal]="true">
+
+  <ng-template #content>
+    <form [formGroup]="userForm">
+      <div class="flex flex-row gap-6 w-full">
+        <div class="flex flex-col gap-1 flex-1">
+          <app-form-input [control]="$any(userForm.get('username'))" label="Username">
+          </app-form-input>
+          <app-form-input [control]="$any(userForm.get('email'))" label="Email">
+          </app-form-input>
+          <app-form-input [control]="$any(userForm.get('firstName'))" label="First Name">
+          </app-form-input>
+          <app-form-input [control]="$any(userForm.get('lastName'))" label="Last Name">
+          </app-form-input>
+          <app-form-input [control]="$any(userForm.get('password'))" label="Password" type="password">
+          </app-form-input>
+
+
+        </div>
+
+        <div class="flex flex-col gap-1 flex-1">
+           <app-form-input [control]="$any(userForm.get('role'))" label="Role" type="select" [options]="roles">
+          </app-form-input>
+
+          <ng-container *ngIf="userForm.value.profilePicture">
+            <img [src]="userForm.value.profilePicture" [alt]="userForm.value.profilePicture"
+              class="block m-auto pb-4" />
+          </ng-container>
+          <app-form-input [control]="$any(userForm.get('profilePicture'))" label="Profile Picture"> </app-form-input>
+
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #footer>
+    <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+    <p-button label="Save" icon="pi pi-check" (click)="saveUser()" [loading]="loadingSave()" />
+  </ng-template>
+
+
+</p-dialog>
 
 
 <p-confirmdialog [style]="{ width: '450px' }" />

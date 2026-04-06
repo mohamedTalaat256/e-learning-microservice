@@ -21,7 +21,7 @@ public class SecurityConfig {
                         // Public endpoints (if any)
                         .requestMatchers("/actuator/health/**", "/actuator/info/**").permitAll()
                         // Protected endpoints - require authentication
-                        .anyRequest().authenticated()
+                        .anyRequest().hasAnyRole("ADMIN", "STUDENT")
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))

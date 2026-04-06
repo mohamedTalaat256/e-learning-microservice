@@ -3,7 +3,9 @@ package com.mtalaat.users.controller;
 
 import com.mtalaat.users.dto.InstructorDto;
 import com.mtalaat.users.entity.AppUser;
+import com.mtalaat.users.request.SaveNewUserRequest;
 import com.mtalaat.users.service.serviceImpl.AppUserServiceImpl;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,6 @@ public class UserController {
     @Autowired
     private AppUserServiceImpl userService;
 
-
-  /*  @GetMapping
-    public List<AppUser> findAllUsers() {
-        return userService.findAllUsers();
-    }*/
 
 
     @GetMapping
@@ -43,8 +40,8 @@ public class UserController {
     }
 
     @PostMapping
-    public AppUser saveUser(@RequestBody AppUser user) {
-        return userService.saveUser(user);
+    public ResponseEntity<UserRepresentation> saveUser(@RequestBody SaveNewUserRequest request) {
+        return ResponseEntity.ok().body(userService.saveUsersKeycloak(request));
     }
 
 

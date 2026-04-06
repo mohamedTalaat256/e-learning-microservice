@@ -22,7 +22,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { UserService } from '../../../core/service/user.service';
+import { UserService } from './user.service';
 import { FormInput } from "../../../shared/components/form-input/form-input";
 import { User } from '../../../core/model/user.model';
 
@@ -48,7 +48,7 @@ interface ExportColumn {
     SliderModule,
     ProgressBarModule,
     ToggleButtonModule,
-     ReactiveFormsModule],
+    ReactiveFormsModule, FormInput],
   templateUrl: './users.html',
   styleUrl: './users.scss',
   providers: [MessageService, ConfirmationService, UserService],
@@ -56,7 +56,6 @@ interface ExportColumn {
 })
 
 export class Users  implements OnInit {
-  userDialog: boolean = false;
 
   user!: User;
   selectedUsers!: User[] | null;
@@ -67,22 +66,28 @@ export class Users  implements OnInit {
   cols!: Column[];
 
   userForm!: FormGroup;
+  roles = [
+    { label: 'ADMIN', value: 'ADMIN' },
+   /*  { label: 'USER', value: 'USER' }, */
+    { label: 'STUDENT', value: 'STUDENT' },
+  ];
 
   private usersService = inject(UserService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  private fb = inject(FormBuilder);
 
   users = this.usersService.users;
   loading = this.usersService.loading;
   error = this.usersService.error;
 
+    loadingSave = this.usersService.loadingSave;
+  userDialog = this.usersService.userDialog;
+
   ngOnInit(): void {
     this.usersService.loadUsers();
 
-    this.statusOptions = [
-      { label: 'ACTIVE', value: true },
-      { label: 'INACTIVE', value: false },
-    ];
+
   }
 
 
@@ -95,14 +100,13 @@ export class Users  implements OnInit {
   }
 
   openNew() {
-    this.user = {};
-    this.submitted = false;
-    this.userDialog = true;
+    this.initiatForm();
+    this.userDialog.set(true);
   }
 
   editUser(user: User) {
     this.user = { ...user };
-    this.userDialog = true;
+    //this.userDialog = true;
   }
 
   deleteSelectedUsers() {
@@ -124,8 +128,7 @@ export class Users  implements OnInit {
   }
 
   hideDialog() {
-    this.userDialog = false;
-    this.submitted = false;
+    this.userDialog.set(false);
   }
 
   deleteUser(user: User) {
@@ -176,12 +179,42 @@ export class Users  implements OnInit {
   }
 
   saveUser() {
-    this.submitted = true;
-    let _users = this.users();
-
-    console.log(this.userForm.value);
+   this.usersService.saveUser(this.userForm.value);
+  }
 
 
+  /*
+      private String username;
+    private String email;
+    private String password;
+    private String firstName;
+    private String lastName;
+    private String role;
+    private String profilePicture;
+  */
+  initiatForm() {
+    this.userForm = this.fb.group({
+      username: ['', [Validators.required, Validators.maxLength(50)]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
+      password: ['12345678', [Validators.required, Validators.minLength(6), Validators.maxLength(255)]],
+      firstName: ['', [Validators.required, Validators.maxLength(50)]],
+      lastName: ['', [Validators.required, Validators.maxLength(50)]],
+      role: ['USER', [Validators.required]],
+      profilePicture: ['', [Validators.maxLength(255)]],
+    });
+  }
+
+  setForm(user: User) {
+    this.userForm = this.fb.group({
+      id: [user.id, [Validators.required]],
+      username: [user.username, [Validators.required, Validators.maxLength(50)]],
+      email: [user.email, [Validators.required, Validators.email, Validators.maxLength(255)]],
+      password: ['', [Validators.minLength(6), Validators.maxLength(255)]],
+      firstName: [user.firstName, [Validators.required, Validators.maxLength(50)]],
+      lastName: [user.lastName, [Validators.required, Validators.maxLength(50)]],
+      role: [user.attributes?.role ? user.attributes.role[0] : '', [Validators.required]],
+      profilePicture: [user.attributes?.profilePicture ? user.attributes.profilePicture[0] : '', [Validators.maxLength(255)]],
+    });
   }
 
 

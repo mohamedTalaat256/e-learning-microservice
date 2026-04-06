@@ -11,148 +11,111 @@
   </ng-template>
 </p-toolbar>
 
-@if(false){
-<p-table #dt [value]="lectures()" [loading]="loading()" [rows]="10" [columns]="cols" [paginator]="true"
-  [globalFilterFields]="['name', 'country.title', 'representative.title', 'status']"
-  [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedLectures" [rowHover]="true" dataKey="id"
-  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} lectures" [showCurrentPageReport]="true"
-  [rowsPerPageOptions]="[10, 20, 30]">
-  <ng-template #caption>
-    <div class="flex items-center justify-between">
-      <h5 class="m-0">Manage Lectures</h5>
-      <p-iconfield>
-        <p-inputicon styleClass="pi pi-search" />
-        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
-      </p-iconfield>
-    </div>
-  </ng-template>
-  <ng-template #header>
-    <tr>
-      <th style="width: 3rem">
-        <p-tableHeaderCheckbox />
-      </th>
-      <th pSortableColumn="id" style="width: 6rem">
-        id
-        <p-sortIcon field="id" />
-      </th>
-      <th pSortableColumn="order" style="width: 6rem">
-        Order
-        <p-sortIcon field="order" />
-      </th>
-
-      <th pSortableColumn="title" style="flex: 1">
-        Title
-        <p-sortIcon field="title" />
-      </th>
-
-      <th style="min-width: 2rem"></th>
-    </tr>
-  </ng-template>
-  <ng-template #body let-lecture>
-    <tr>
-      <td style="width: 3rem">
-        <p-tableCheckbox [value]="lecture" />
-      </td>
-      <td style="min-width: 6rem">{{ lecture.id }}</td>
-      <td style="min-width: 6rem">{{ lecture.order }}</td>
-      <td>{{ lecture.title }}</td>
-
-
-      <td style="min-width: 2rem">
-        <p-button icon="pi pi-pencil" class="mx-2" [rounded]="true" [outlined]="true" (click)="editLecture(lecture)" />
-        <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
-          (click)="deleteLecture(lecture)" />
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
-}
-
 <!-- ----------------- -->
+@if(false){
+<div class="card">
+  <div class="font-semibold text-xl mb-4">Course Lectures</div>
+  <p-table [value]="sections()" [loading]="loading()" [rows]="10" dataKey="id" [tableStyle]="{ 'min-width': '60rem' }"
+    [expandedRowKeys]="expandedRows">
+    <ng-template #caption>
+      <button pButton icon="pi pi-fw {{ isExpanded ? 'pi-minus' : 'pi-plus' }}"
+        label="{{ isExpanded ? 'Collapse All' : 'Expand All' }}" (click)="expandAll()"></button>
+      <div class="flex table-header"></div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th style="width: 3rem">
+          <!--    <p-tableHeaderCheckbox /> -->
+        </th>
+        <th pSortableColumn="id" style="width: 6rem">
+          id
+          <p-sortIcon field="id" />
+        </th>
 
-        <div class="card">
-            <div class="font-semibold text-xl mb-4">Row Expansion</div>
-            <p-table [value]="sections()" [loading]="loading()" [rows]="10" dataKey="id" [tableStyle]="{ 'min-width': '60rem' }" [expandedRowKeys]="expandedRows">
-                <ng-template #caption>
-                    <button pButton icon="pi pi-fw {{ isExpanded ? 'pi-minus' : 'pi-plus' }}" label="{{ isExpanded ? 'Collapse All' : 'Expand All' }}" (click)="expandAll()"></button>
-                    <div class="flex table-header"></div>
-                </ng-template>
-                <ng-template #header>
-                  <tr>
-                    <th style="width: 3rem">
-                   <!--    <p-tableHeaderCheckbox /> -->
-                    </th>
-                    <th pSortableColumn="id" style="width: 6rem">
-                      id
-                      <p-sortIcon field="id" />
-                    </th>
+        <th pSortableColumn="title" style="flex: 1">
+          Title
+          <p-sortIcon field="title" />
+        </th>
 
-                    <th pSortableColumn="title" style="flex: 1">
-                      Title
-                      <p-sortIcon field="title" />
-                    </th>
+        <th style="min-width: 2rem"></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-section let-expanded="expanded">
+      <tr>
+        <td style="width: 3rem">
+          <!--   <p-tableCheckbox [value]="section" /> -->
 
-                    <th style="min-width: 2rem"></th>
-                  </tr>
-                </ng-template>
-                <ng-template #body let-section let-expanded="expanded">
-                    <tr>
-                      <td style="width: 3rem">
-                      <!--   <p-tableCheckbox [value]="section" /> -->
+          <p-button type="button" pRipple [pRowToggler]="section" [text]="true" [rounded]="true" [plain]="true"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
 
-                        <p-button type="button" pRipple [pRowToggler]="section" [text]="true" [rounded]="true" [plain]="true" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
-
-                      </td>
-                      <td style="min-width: 6rem">{{ section.id }}</td>
-                      <td>{{ section.title }}</td>
+        </td>
+        <td style="min-width: 6rem">{{ section.id }}</td>
+        <td>{{ section.title }}</td>
 
 
-                      <td style="min-width: 2rem">
-                        <p-button icon="pi pi-pencil" class="mx-2" [rounded]="true" [outlined]="true" (click)="editLecture(section)" />
-                        <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteLecture(section)" />
-                      </td>
-                    </tr>
-                </ng-template>
-                <ng-template #expandedrow let-section>
-                    <tr>
-                        <td colspan="7">
-                            <div class="p-4">
-                                <h5>Lectures of {{ section.title }}</h5>
-                                <p-table [value]="section.lectures" dataKey="id">
-                                    <ng-template #header>
-                                        <tr>
-                                            <th pSortableColumn="id">Id <p-sortIcon field="id" /></th>
-                                            <th pSortableColumn="title"> Title
-                                                <p-sortIcon field="title" />
-                                            </th>
+        <td style="min-width: 2rem">
+          <p-button icon="pi pi-pencil" class="mx-2" [rounded]="true" [outlined]="true"
+            (click)="editLecture(section)" />
+          <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+            (click)="deleteLecture(section)" />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #expandedrow let-section>
+      <h5>Lectures of {{ section.title }}</h5>
 
-                                            <th style="width: 4rem"></th>
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template #body let-lecture>
-                                        <tr>
-                                            <td>{{ lecture.id }}</td>
-                                            <td style="max-width: 14rem">{{ lecture.title }}</td>
-                                            <td style="min-width: 4rem">
-                                              <p-button icon="pi pi-pencil" class="mx-2" [rounded]="true" [outlined]="true" (click)="editLecture(lecture)" />
-                                              <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
-                                                  (click)="deleteLecture(lecture)" />
-                                            </td>
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template #emptymessage>
-                                        <tr>
-                                            <td colspan="6">There are no order for this product yet.</td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
 
+      <!--  <div class="card flex flex-col gap-2 p-4 w-full rounded-2" key={lecture.id}>
+                      <div class="font-semibold text-lg mb-2">{{ lecture.title }}</div>
+                      <div class="text-sm mb-2">{{ lecture.description }}</div>
+                      <div class="text-sm mb-2">Order: {{ lecture.order }}</div>
+                      <div class="text-sm mb-2">URL: {{ lecture.url }}</div>
+
+                    </div> -->
+
+
+    </ng-template>
+  </p-table>
+</div>
+}
+<div class="flex flex-col md:flex-row">
+
+  <div class="card w-full">
+    <div class="font-semibold text-xl mb-4">Course Lectures</div>
+    <p-accordion value="0">
+
+      @for( section of sections(); track section.id){
+      <p-accordion-panel [value]="section.id">
+        <p-accordion-header>{{section.title}}</p-accordion-header>
+        <p-accordion-content>
+
+          <!-- create grid row has 4 div in each row for section lectures add rounded corner and shadow -->
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for( lecture of section.lectures; track lecture.id){
+            <div class="card flex flex-col gap-2 p-4 w-full rounded-2 shadow" key={lecture.id}>
+              <div class="font-semibold text-lg mb-2">{{ lecture.title }}</div>
+              <div class="text-sm mb-2">{{ lecture.description }}</div>
+              <div class="text-sm mb-2">Order: {{ lecture.order }}</div>
+              <div class="text-sm mb-2">URL: {{ lecture.url }}</div>
+              <div class="flex gap-2 mt-auto">
+                <p-button icon="pi pi-pencil" [rounded]="true" [outlined]="true" (click)="editLecture(lecture)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                  (click)="deleteLecture(lecture)" />
+              </div>
+            </div>
+            }
+            </div>
+
+
+        </p-accordion-content>
+      </p-accordion-panel>
+      }
+
+    </p-accordion>
+  </div>
+
+</div>
 
 <!-- -------------------- -->
 
@@ -173,8 +136,7 @@
 
         <div class="flex flex-col gap-1 flex-1">
           <app-form-input [control]="$any(lectureForm.get('sectionId'))" label="Section" type="select"
-          [options]="sections()"
-          > </app-form-input>
+            [options]="sections()"> </app-form-input>
 
         </div>
       </div>

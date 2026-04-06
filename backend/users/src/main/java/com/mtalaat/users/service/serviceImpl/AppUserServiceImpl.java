@@ -3,15 +3,21 @@ package com.mtalaat.users.service.serviceImpl;
 import com.mtalaat.users.dto.InstructorDto;
 import com.mtalaat.users.entity.AppUser;
 import com.mtalaat.users.repository.AppUserRepository;
+import com.mtalaat.users.request.SaveNewUserRequest;
 import com.mtalaat.users.service.AppUserService;
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
+import jakarta.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -84,9 +90,49 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public UserRepresentation saveUsersKeycloak() {
+    public UserRepresentation saveUsersKeycloak(SaveNewUserRequest request) {
+
+
         UserRepresentation newUser = new UserRepresentation();
-        //return keycloak.realm(realm).users().create();
-        return null;
+
+        newUser.setEmail(request.getEmail());
+        newUser.setUsername(request.getUsername());
+        newUser.setFirstName(request.getFirstName());
+        newUser.setLastName(request.getLastName());
+        newUser.setEnabled(true);
+        newUser.setEmailVerified(true);
+
+        CredentialRepresentation credential = new CredentialRepresentation();
+        credential.setType(CredentialRepresentation.PASSWORD);
+        credential.setValue(request.getPassword());
+        credential.setTemporary(false);
+        newUser.setCredentials(List.of(credential));
+
+        newUser.setAttributes(Map.of("profilePicture", List.of(request.getProfilePicture())));
+
+        RealmResource realmResource = keycloak.realm(realm);
+
+        Response response = realmResource.users().create(newUser);
+        if (response.getStatus() == 409) {
+            throw new RuntimeException("Failed to create user: " + response.getStatus());
+        }
+
+        if (response.getStatus() != 201) {
+            throw new RuntimeException("Failed to create user: " + response.getStatus());
+        }
+
+        String userId = CreatedResponseUtil.getCreatedId(response);
+
+        UserResource userResource = realmResource.users().get(userId);
+
+        userResource.roles()
+                .realmLevel()
+                .add(List.of(
+                        realmResource.roles().get("STUDENT").toRepresentation()
+                ));
+
+        return userResource.toRepresentation();
+
+
     }
 }

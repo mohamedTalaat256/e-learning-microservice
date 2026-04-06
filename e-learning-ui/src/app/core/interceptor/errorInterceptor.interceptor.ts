@@ -23,7 +23,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       } else if (error.status === 404) {
         message = 'Not found';
       } else if (error.status === 500) {
-        message = 'Server error';
+        message = 'Server error: ' + error.error?.message || 'An unexpected error occurred on the server';
       } else if (error.status === 413) {
         message = 'Content Too Large: Maximum upload size exceeded';
       } else if(error.status === 415){

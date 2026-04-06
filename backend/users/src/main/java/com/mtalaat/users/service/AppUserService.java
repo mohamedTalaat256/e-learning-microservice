@@ -2,6 +2,7 @@ package com.mtalaat.users.service;
 
 import com.mtalaat.users.dto.InstructorDto;
 import com.mtalaat.users.entity.AppUser;
+import com.mtalaat.users.request.SaveNewUserRequest;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
 
@@ -20,6 +21,6 @@ public interface AppUserService {
 
 
     public List<UserRepresentation> getUsersKeycloak();
-    public UserRepresentation saveUsersKeycloak();
+    public UserRepresentation saveUsersKeycloak(SaveNewUserRequest newUser);
 
 }
