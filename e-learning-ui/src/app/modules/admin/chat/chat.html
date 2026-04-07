@@ -1,0 +1,97 @@
+<div class="card" style="height: calc(100vh - 12rem)">
+  <div class="flex h-screen gap-4 bg-gray-100 font-['Inter']">
+    <div class="border-r border-gray-200 flex flex-col" style="width: 300px;">
+      <div class="pt-3 pb-4">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-xl font-bold text-gray-900">Messages</h2>
+        </div>
+        <div class="flex">
+          <p-inputgroup>
+            <p-inputgroup-addon>
+              <i class="pi pi-search"></i>
+            </p-inputgroup-addon>
+            <input pInputText placeholder="Search" />
+          </p-inputgroup>
+
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto ">
+        @for (user of users(); track $index) {
+        <div (click)="selectChatUser(user)"
+          class=" w-full flex items-center gap-3 py-3 px-3 rounded-border text-left mb-0.5 cursor-pointer hover:bg-gray-100 duration-300 transition-all">
+          <div class="relative flex-shrink-0">
+            <img [src]="user.attributes.profilePicture[0]" class="circle-avatar-42"/>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-gray-900 truncate">{{ user.firstName + ' ' + user.lastName
+                }}</span>
+              <span class="text-xs text-gray-400 flex-shrink-0 ml-1">15 mins</span>
+            </div>
+            <p class="text-xs text-gray-500 truncate mt-0.5">Project Manager</p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    <div class="flex-1 flex flex-col" style="height: calc(100vh - 14rem);">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+          <div class="relative flex-shrink-0">
+            <img [src]="selectedChatUser.attributes.profilePicture[0]" class="circle-avatar-42"/>
+          </div>
+          <div>
+            <h2 class="text-sm font-semibold text-gray-900">{{selectedChatUser.firstName}} {{selectedChatUser.lastName}}
+            </h2>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+
+
+          <!-- chat actions -->
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto px-6 py-6 space-y-6" style="max-height: 700px;
+    overflow: auto;">
+        @for (message of messages(); track $index) {
+          @if(message.senderId === selectedChatUser.id) {
+            <div class="flex items-start gap-3">
+              <div class="max-w-[60%]">
+                <div class="bg-blue-500 rounded-border px-4 py-3">
+                  <p class="text-sm text-white leading-relaxed">{{message.message}}</p>
+                </div>
+                <p class="text-xs text-gray-400 mt-1 ml-1">
+                   {{ message.createdAt | date: 'longDate' }} at {{ message.createdAt | date: 'shortTime' }}
+                </p>
+              </div>
+            </div>
+          }@else {
+            <div class="flex justify-content-end gap-3">
+              <div class="max-w-[60%]">
+                <div class="bg-blue-100 rounded-border px-4 py-3">
+                  <p class="text-sm text-gray leading-relaxed">{{message.message}}</p>
+                </div>
+               <p class="text-xs text-gray-400 mt-1 ml-1">
+                   {{ message.createdAt | date: 'longDate' }} at {{ message.createdAt | date: 'shortTime' }}
+                </p>
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+
+      <div class="px-6 py-4 border-t border-gray-100">
+        <div class="flex items-center gap-3 bg-gray-50 rounded-2xl px-4 py-3">
+
+          <input pInputText placeholder="Type a message..."
+            class="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none w-full " />
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

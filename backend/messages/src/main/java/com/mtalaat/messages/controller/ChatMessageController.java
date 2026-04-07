@@ -16,13 +16,13 @@ public class ChatMessageController {
     ChatMessageService chatMessageService;
 
 
-    @GetMapping("/findMessagesBetweenAuthUserAndOtherUser")
-    public ResponseEntity<Object> findMessagesBetweenAuthUserAndOtherUser(@RequestHeader("mtalaat-correlation-id")                                                              String correlationId){
-        return ResponseEntity.ok().body(chatMessageService.findMessagesBetweenAuthUserAndOtherUser());
+    @GetMapping("/findMessagesBetweenAuthUserAndOtherUser/{otherUserId}")
+    public ResponseEntity<Object> findMessagesBetweenAuthUserAndOtherUser(@RequestHeader("mtalaat-correlation-id") String correlationId, @PathVariable String otherUserId){
+        return ResponseEntity.ok().body(chatMessageService.findMessagesBetweenAuthUserAndOtherUser(otherUserId));
     }
 
     @PostMapping("/sendMessageFromAuthUserToOtherUser")
-    public ResponseEntity<Object> sendMessageFromAuthUserToOtherUser(@RequestBody ChatMessageDto request,  @RequestHeader("mtalaat-correlation-id")                                                              String correlationId){
+    public ResponseEntity<Object> sendMessageFromAuthUserToOtherUser(@RequestBody ChatMessageDto request,  @RequestHeader("mtalaat-correlation-id") String correlationId){
         return ResponseEntity.ok().body(chatMessageService.sendMessageFromAuthUserToOtherUser(request));
     }
 }

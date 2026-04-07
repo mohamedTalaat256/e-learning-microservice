@@ -4551,6 +4551,14 @@ img.flag {
             border-color: var(--p-primary-color)
         }
 
+        .hover\:bg-gray-50:hover {
+            background-color: var(--p-gray-50)
+        }
+        .hover\:bg-gray-100:hover {
+            background-color: var(--p-gray-100)
+        }
+
+
         @supports (color: color-mix(in lab, red, red)) {
             .hover\:border-primary:hover {
                 border-color: color-mix(in srgb, var(--p-primary-color) 100%, transparent)

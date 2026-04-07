@@ -4,6 +4,8 @@ import com.mtalaat.messages.dto.ChatMessageDto;
 import com.mtalaat.messages.entity.ChatMessage;
 import com.mtalaat.messages.repository.ChatMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +16,11 @@ public class ChatMessageService {
     @Autowired
     ChatMessageRepository chatMessageRepository;
 
-    public List<ChatMessage> findMessagesBetweenAuthUserAndOtherUser(){
-        String authId ="4eb6e02a-2c54-4ce9-b2b2-bf90c2d4b512";
-        List<ChatMessage> messages = chatMessageRepository.findBySenderIdOrReceiverId(authId, authId);
-        return messages;
+    public List<ChatMessage> findMessagesBetweenAuthUserAndOtherUser(String otherUserId){
+
+        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String authUserId = jwt.getSubject();
+        return chatMessageRepository.findConversation(authUserId, otherUserId);
     }
 
     public ChatMessage sendMessageFromAuthUserToOtherUser(ChatMessageDto request){
